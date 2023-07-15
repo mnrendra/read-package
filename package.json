@@ -1,6 +1,6 @@
 {
   "name": "@mnrendra/read-package",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Read (obtain) the package.json file from any directory within a NodeJS module and parse it into a JSON.",
   "keywords": [
     "read",
