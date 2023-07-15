@@ -1,7 +1,7 @@
 {
   "name": "@mnrendra/read-package",
   "version": "0.0.0-development",
-  "description": "Reads and parses the package.json file into a JavaScript Object.",
+  "description": "Read (obtain) the package.json file from any directory within a NodeJS module and parse it into a JSON.",
   "keywords": [
     "read",
     "package",
@@ -10,6 +10,8 @@
     "package-json"
   ],
   "private": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && npx rollup -c",
@@ -31,6 +33,7 @@
   },
   "homepage": "https://github.com/mnrendra/read-package#readme",
   "dependencies": {
+    "@mnrendra/stack-trace": "^1.0.0",
     "@mnrendra/types-package": "^1.0.0"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import { dirname, basename, resolve } from 'path'
 import * as utils from './utils'
-import * as index from '.'
+import mainAsync from './mainAsync'
 
 describe('Test `utils` dependencies!', () => {
   describe('Test `initPath` util!', () => {
@@ -89,22 +89,11 @@ describe('Test `utils` dependencies!', () => {
   })
 })
 
-describe('Test the root `index`!', () => {
-  describe('Test `readPackage` feature!', () => {
-    it('Should resolve the `package.json` data as a `Package` object!', async () => {
-      const received = await index.readPackage()
-      const expected = expect.any(Object)
+describe('Test `mainAsync` feature!', () => {
+  it('Should resolve the `package.json` data as a `Package` object!', async () => {
+    const received = await mainAsync()
+    const expected = expect.any(Object)
 
-      expect(received).toEqual(expected)
-    })
-  })
-
-  describe('Test `readPackageSync` feature!', () => {
-    it('Should return the `package.json` data as a `Package` object!', () => {
-      const received = index.readPackageSync()
-      const expected = expect.any(Object)
-
-      expect(received).toEqual(expected)
-    })
+    expect(received).toEqual(expected)
   })
 })
