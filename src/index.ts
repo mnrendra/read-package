@@ -1,6 +1,6 @@
 import type { Package } from '@mnrendra/types-package'
-import mainAsync from './mainAsync'
-import mainSync from './mainSync'
+import mainAsync from './async'
+import mainSync from './sync'
 
 export type {
   Package

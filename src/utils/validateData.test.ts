@@ -1,6 +1,6 @@
 import validateData from './validateData'
 
-describe('Test `validateData` util!', () => {
+describe('Test `validateData` util.', () => {
   it('Should return `false` when the given value is not a stringed object!', () => {
     const received = validateData('')
     const expected = false
