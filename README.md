@@ -1,5 +1,5 @@
 # @mnrendra/read-package
-Read (obtain) the `package.json` file from any directory within a NodeJS module and parse it into a JSON.
+Read the `package.json` file from any sub-directory in your project.
 
 ## Install
 ```bash

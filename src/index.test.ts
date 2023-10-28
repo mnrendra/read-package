@@ -2,15 +2,17 @@ import { dirname, basename, resolve, join } from 'path'
 import * as utils from './utils'
 import * as index from '.'
 
-import { readAsync, readSync } from '@tests/mocks'
 import { unmock } from '@tests/utils'
 
-jest.mock('./utils/readAsync')
-jest.mock('./utils/readSync')
+import readAsync from '@tests/mocks/async/read'
+import readSync from '@tests/mocks/sync/read'
 
-describe('Test `utils`!', () => {
-  describe('Test `initPath` util!', () => {
-    it('Should return the file path in the current directory!', () => {
+jest.mock('./async/read')
+jest.mock('./sync/read')
+
+describe('Test utils.', () => {
+  describe('Test `initPath` util.', () => {
+    it('Should return the initial path!', () => {
       const received = utils.initPath('any.file')
       const expected = resolve(resolve(__dirname, 'utils'), 'any.file')
 
@@ -18,7 +20,7 @@ describe('Test `utils`!', () => {
     })
   })
 
-  describe('Test `movePath` util!', () => {
+  describe('Test `movePath` util.', () => {
     it('Should return the file path in the parent directory!', () => {
       const base = basename(__filename)
       const dir = dirname(__filename)
@@ -30,155 +32,42 @@ describe('Test `utils`!', () => {
     })
   })
 
-  describe('Test `obtainAsync` util!', () => {
-    describe('By mocking `readAsync` to resolve empty json string!', () => {
-      beforeAll(() => {
-        readAsync.mockResolvedValue('{}')
-      })
-
-      afterAll(() => {
-        unmock(readAsync, join(__dirname, './utils/readAsync'))
-      })
-
-      it('Should resolve the file data as a `string` when able to obtain the file!', async () => {
-        const received = await utils.obtainAsync('package.json')
-        const expected = expect.any(String)
-
-        expect(received).toEqual(expected)
-      })
-    })
-
-    describe('By mocking `readAsync` to resolve non-json string!', () => {
-      beforeAll(() => {
-        readAsync.mockResolvedValue('')
-      })
-
-      afterAll(() => {
-        unmock(readAsync, join(__dirname, './utils/readAsync'))
-      })
-
-      it('Should throw an error when able to obtain the file but the value is invalid!', async () => {
-        const received = utils.obtainAsync('package.json')
-        const expected = Error('Unable to obtain the file data!')
-
-        await expect(received).rejects.toThrow(expected)
-      })
-    })
-
-    describe('Without mocking `readAsync`!', () => {
-      it('Should throw an error when unable to obtain the file!', async () => {
-        const received = utils.obtainAsync('any.file')
-        const expected = Error('Unable to obtain the file data!')
-
-        await expect(received).rejects.toThrow(expected)
-      })
-
-      it('Should throw an error when able to obtain the file but the value is invalid!', async () => {
-        const received = utils.obtainAsync('package.json')
-        const expected = Error('Unable to obtain the file data!')
-
-        await expect(received).rejects.toThrow(expected)
-      })
-    })
-  })
-
-  describe('Test `obtainSync` util!', () => {
-    describe('By mocking `readSync` to return empty json string!', () => {
-      beforeAll(() => {
-        readSync.mockReturnValue('{}')
-      })
-
-      afterAll(() => {
-        unmock(readSync, join(__dirname, './utils/readSync'))
-      })
-
-      it('Should return the file data as a `string` when able to obtain the file!', () => {
-        const received = utils.obtainSync('package.json')
-        const expected = expect.any(String)
-
-        expect(received).toEqual(expected)
-      })
-    })
-
-    describe('By mocking `readSync` to return non-json string!', () => {
-      beforeAll(() => {
-        readSync.mockReturnValue('')
-      })
-
-      afterAll(() => {
-        unmock(readSync, join(__dirname, './utils/readSync'))
-      })
-
-      it('Should throw an error when able to obtain the file but the value is invalid!', () => {
-        const received = (): void => { utils.obtainSync('package.json') }
-        const expected = Error('Unable to obtain the file data!')
-
-        expect(received).toThrow(expected)
-      })
-    })
-
-    describe('Without mocking `readSync`!', () => {
-      it('Should throw an error when unable to obtain the file!', () => {
-        const received = (): void => { utils.obtainSync('any.file') }
-        const expected = Error('Unable to obtain the file data!')
-
-        expect(received).toThrow(expected)
-      })
-
-      it('Should throw an error when able to obtain the file but the value is invalid!', () => {
-        const received = (): void => { utils.obtainSync('package.json') }
-        const expected = Error('Unable to obtain the file data!')
-
-        expect(received).toThrow(expected)
-      })
-    })
-  })
-
-  describe('Test `readAsync` util!', () => {
-    it('Should resolve as `undefined` when unable to read the file!', async () => {
-      const received = await utils.readAsync(resolve(__dirname, 'any.file'))
-      const expected = undefined
+  describe('Test `validateData` util.', () => {
+    it('Should return `false` when the given value is not a stringed object!', () => {
+      const received = utils.validateData('')
+      const expected = false
 
       expect(received).toBe(expected)
     })
 
-    it('Should resolve the file data as a `string` when able to read the file!', async () => {
-      const received = await utils.readAsync(__filename)
-      const expected = expect.any(String)
-
-      expect(received).toEqual(expected)
-    })
-  })
-
-  describe('Test `readSync` util!', () => {
-    it('Should return `undefined` when unable to read the file!', () => {
-      const received = utils.readSync(resolve(__dirname, 'any.file'))
-      const expected = undefined
+    it('Should return `false` when the given value is a stringed object but include `{ "name": "@mnrendra/read-package" }`!', () => {
+      const received = utils.validateData('{ "name": "@mnrendra/read-package" }')
+      const expected = false
 
       expect(received).toBe(expected)
     })
 
-    it('Should return the file data as a `string` when able to read the file!', () => {
-      const received = utils.readSync(__filename)
-      const expected = expect.any(String)
+    it('Should return `true` when the given value is a stringed object and exclude `{ "name": "@mnrendra/read-package" }`!', () => {
+      const received = utils.validateData('{}')
+      const expected = true
 
-      expect(received).toEqual(expected)
+      expect(received).toBe(expected)
     })
   })
 })
 
-describe('Test the root `index`!', () => {
-  describe('Test `readPackage` feature!', () => {
-    describe('By mocking `readAsync` to resolve empty json string!', () => {
+describe('Test the root `index`.', () => {
+  describe('Test async feature.', () => {
+    describe('By mocking `readAsync` to resolve empty json string.', () => {
       beforeAll(() => {
         readAsync.mockResolvedValue('{}')
       })
 
       afterAll(() => {
-        unmock(readAsync, join(__dirname, './utils/readAsync'))
+        unmock(readAsync, join(__dirname, './async/read'))
       })
 
-      it('Should resolve the `package.json` data as a `Package` object!', async () => {
+      it('Should resolve the file data as a `string` when able to obtain the file!', async () => {
         const received = await index.readPackage()
         const expected = expect.any(Object)
 
@@ -186,13 +75,13 @@ describe('Test the root `index`!', () => {
       })
     })
 
-    describe('By mocking `readAsync` to resolve non-json string!', () => {
+    describe('By mocking `readAsync` to resolve non-json string.', () => {
       beforeAll(() => {
         readAsync.mockResolvedValue('')
       })
 
       afterAll(() => {
-        unmock(readAsync, join(__dirname, './utils/readAsync'))
+        unmock(readAsync, join(__dirname, './async/read'))
       })
 
       it('Should throw an error when able to obtain the file but the value is invalid!', async () => {
@@ -203,7 +92,7 @@ describe('Test the root `index`!', () => {
       })
     })
 
-    describe('Without mocking `readAsync`!', () => {
+    describe('Without mocking `read`.', () => {
       it('Should throw an error when unable to obtain the file!', async () => {
         const received = index.readPackage()
         const expected = Error('Unable to obtain the file data!')
@@ -213,17 +102,17 @@ describe('Test the root `index`!', () => {
     })
   })
 
-  describe('Test `readPackageSync` feature!', () => {
-    describe('By mocking `readSync` to return empty json string!', () => {
+  describe('Test sync feature.', () => {
+    describe('By mocking `readSync` to return empty json string.', () => {
       beforeAll(() => {
         readSync.mockReturnValue('{}')
       })
 
       afterAll(() => {
-        unmock(readSync, join(__dirname, './utils/readSync'))
+        unmock(readSync, join(__dirname, './sync/read'))
       })
 
-      it('Should return the `package.json` data as a `Package` object!', () => {
+      it('Should return the file data as a `string` when able to obtain the file!', () => {
         const received = index.readPackageSync()
         const expected = expect.any(Object)
 
@@ -231,13 +120,13 @@ describe('Test the root `index`!', () => {
       })
     })
 
-    describe('By mocking `readSync` to return non-json string!', () => {
+    describe('By mocking `readSync` to return non-json string.', () => {
       beforeAll(() => {
         readSync.mockReturnValue('')
       })
 
       afterAll(() => {
-        unmock(readSync, join(__dirname, './utils/readSync'))
+        unmock(readSync, join(__dirname, './sync/read'))
       })
 
       it('Should throw an error when able to obtain the file but the value is invalid!', () => {
@@ -248,7 +137,7 @@ describe('Test the root `index`!', () => {
       })
     })
 
-    describe('Without mocking `readSync`!', () => {
+    describe('Without mocking `read`.', () => {
       it('Should throw an error when unable to obtain the file!', () => {
         const received = (): void => { index.readPackageSync() }
         const expected = Error('Unable to obtain the file data!')
