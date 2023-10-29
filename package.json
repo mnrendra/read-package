@@ -1,7 +1,7 @@
 {
   "name": "@mnrendra/read-package",
   "version": "2.0.1",
-  "description": "Read (obtain) the package.json file from any directory within a NodeJS module and parse it into a JSON.",
+  "description": "Read the package.json file from any sub-directory in your project.",
   "keywords": [
     "read",
     "package",
@@ -55,6 +55,7 @@
     "rollup-plugin-esbuild": "^5.0.0",
     "semantic-release": "^21.0.7",
     "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   }
 }

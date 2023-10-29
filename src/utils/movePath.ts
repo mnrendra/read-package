@@ -7,13 +7,13 @@ import { basename, dirname, resolve } from 'path'
  * @returns Moved path.
  */
 const movePath = (path: string, aim: string): string => {
-  // Retrieve the base name.
+  // Get the base name.
   const base = basename(path)
-  // Retrieve the directory name.
+  // Get the directory name.
   const dir = dirname(path)
-  // Move the directory.
+  // Move to the aim directory.
   const movedDir = resolve(dir, aim)
-  // Move the path.
+  // Resolve the moved path.
   const movedPath = resolve(movedDir, base)
   // Return the moved path.
   return movedPath

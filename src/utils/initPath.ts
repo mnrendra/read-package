@@ -1,22 +1,28 @@
 import { dirname, resolve } from 'path'
 import { stackTrace } from '@mnrendra/stack-trace'
 
+const EXCLUDE_STACK = '/node_modules/@mnrendra/read-package'
+
 /**
  * Initialize path.
- * @param basename Base name (file name) to be initialized.
- * @returns Initialized path.
+ * @param basename Base name (file name) to be resolved with the initialize path
+ * @returns Initialized path
  */
 const initPath = (basename: string): string => {
-  // Retrieve the first stack traces.
-  const [stack] = stackTrace()
-  // Retrieve the file name (path) of the first stack traces.
-  const path = stack.getFileName()
-  // Retrieve the directory name of the file name (path).
-  const dir = dirname(path as string)
-  // Initialize the initial path.
-  const initialpath = resolve(dir, basename)
+  // Trace the stacks.
+  const stacks = stackTrace()
+  // Map the stack trace paths.
+  const paths = stacks.map((stack) => stack.getFileName() || EXCLUDE_STACK)
+  // Find the initial path.
+  const path = paths.find((path) => !path.includes(EXCLUDE_STACK))
+  // Throw an error if the path is undefined.
+  if (!path) throw new Error('Unable to obtain the initial path!')
+  // Get the directory name.
+  const dir = dirname(path)
+  // Resolve the initial path.
+  const initialPath = resolve(dir, basename)
   // Return the initialized path.
-  return initialpath
+  return initialPath
 }
 
 // Export the `initPath` as the default value.
