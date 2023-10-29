@@ -1,22 +1,49 @@
 import { join } from 'path'
 import index from '.'
 
-import { read } from '@tests/mocks/async'
 import { unmock } from '@tests/utils'
+import stackTrace from '@tests/mocks/stackTrace'
+import readAsync from '@tests/mocks/readAsync'
+
+jest.mock('@mnrendra/stack-trace', () => ({
+  stackTrace: jest.fn()
+}))
 
 jest.mock('./read')
 
 describe('Test `index` async.', () => {
-  describe('By mocking `read` to resolve empty json string.', () => {
+  describe('By mocking `initPath` to throw an error.', () => {
     beforeAll(() => {
-      read.mockResolvedValue('{}')
+      stackTrace.mockReturnValue([
+        { getFileName: () => undefined },
+        { getFileName: () => null },
+        { getFileName: () => '' }
+      ] as NodeJS.CallSite[])
     })
 
     afterAll(() => {
-      unmock(read, join(__dirname, 'read'))
+      const originalModule = jest.requireActual('@mnrendra/stack-trace')
+      stackTrace.mockImplementation(originalModule.stackTrace)
     })
 
-    it('Should resolve the file data as a `string` when able to obtain the file!', async () => {
+    it('Should throw an error when unable to obtain the initial path!', async () => {
+      const received = index()
+      const expected = Error('Unable to obtain the initial path!')
+
+      await expect(received).rejects.toThrow(expected)
+    })
+  })
+
+  describe('By mocking `read` async to resolve empty json string.', () => {
+    beforeAll(() => {
+      readAsync.mockResolvedValue('{}')
+    })
+
+    afterAll(() => {
+      unmock(readAsync, join(__dirname, 'read'))
+    })
+
+    it('Should resolve the file data when able to obtain the file!', async () => {
       const received = await index()
       const expected = expect.any(Object)
 
@@ -24,16 +51,16 @@ describe('Test `index` async.', () => {
     })
   })
 
-  describe('By mocking `read` to resolve non-json string.', () => {
+  describe('By mocking `read` async to resolve non-json string.', () => {
     beforeAll(() => {
-      read.mockResolvedValue('')
+      readAsync.mockResolvedValue('')
     })
 
     afterAll(() => {
-      unmock(read, join(__dirname, 'read'))
+      unmock(readAsync, join(__dirname, 'read'))
     })
 
-    it('Should throw an error when able to obtain the file but the value is invalid!', async () => {
+    it('Should throw an error when unable to obtain the file!', async () => {
       const received = index()
       const expected = Error('Unable to obtain the file data!')
 
@@ -41,12 +68,12 @@ describe('Test `index` async.', () => {
     })
   })
 
-  describe('Without mocking `read`.', () => {
-    it('Should throw an error when unable to obtain the file!', async () => {
-      const received = index()
-      const expected = Error('Unable to obtain the file data!')
+  describe('Without mocking anything.', () => {
+    it('Should resolve the file data when able to obtain the file!', async () => {
+      const received = await index()
+      const expected = expect.any(Object)
 
-      await expect(received).rejects.toThrow(expected)
+      expect(received).toEqual(expected)
     })
   })
 })

@@ -1,4 +1,4 @@
-import { dirname, basename, resolve } from 'path'
+import { basename, dirname, resolve } from 'path'
 import movePath from './movePath'
 
 describe('Test `movePath` util.', () => {

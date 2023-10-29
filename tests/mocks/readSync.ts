@@ -1,4 +1,4 @@
-import originalModule from '../../../src/sync/read'
+import originalModule from '../../src/sync/read'
 
 const mockedModule = originalModule as jest.Mock
 

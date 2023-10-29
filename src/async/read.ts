@@ -5,9 +5,7 @@ import { readFile } from 'fs'
  * @param path File path.
  * @returns File data in a promise.
  */
-const read = async (
-  path: string
-): Promise<string | undefined> => {
+const read = async (path: string): Promise<string | undefined> => {
   // Return as a promise-based.
   return await new Promise((resolve) => {
     // Read file path.
