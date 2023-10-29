@@ -1,13 +1,66 @@
-import { dirname, basename, resolve } from 'path'
+import { basename, dirname, resolve } from 'path'
 import * as index from '.'
+
+import stackTrace from '@tests/mocks/stackTrace'
+
+jest.mock('@mnrendra/stack-trace', () => ({
+  stackTrace: jest.fn()
+}))
 
 describe('Test `index` utils.', () => {
   describe('Test `initPath` util.', () => {
-    it('Should return the initial path!', () => {
-      const received = index.initPath('any.file')
-      const expected = resolve(__dirname, 'any.file')
+    describe('By mocking `stackTrace` to return mocked `getFileName` with positive conditions.', () => {
+      beforeAll(() => {
+        stackTrace.mockReturnValue([
+          { getFileName: () => undefined },
+          { getFileName: () => null },
+          { getFileName: () => '' },
+          { getFileName: () => resolve(__dirname, 'any.file') }
+        ] as NodeJS.CallSite[])
+      })
 
-      expect(received).toBe(expected)
+      afterAll(() => {
+        const originalModule = jest.requireActual('@mnrendra/stack-trace')
+        stackTrace.mockImplementation(originalModule.stackTrace)
+      })
+
+      it('Should return the current directory path!', () => {
+        const received = index.initPath('any.file')
+        const expected = resolve(__dirname, 'any.file')
+
+        expect(received).toBe(expected)
+      })
+    })
+
+    describe('By mocking `stackTrace` to return mocked `getFileName` with negative conditions.', () => {
+      beforeAll(() => {
+        stackTrace.mockReturnValue([
+          { getFileName: () => undefined },
+          { getFileName: () => null },
+          { getFileName: () => '' }
+        ] as NodeJS.CallSite[])
+      })
+
+      afterAll(() => {
+        const originalModule = jest.requireActual('@mnrendra/stack-trace')
+        stackTrace.mockImplementation(originalModule.stackTrace)
+      })
+
+      it('Should throw an error when unable to obtain the initial path!', () => {
+        const received = (): void => { index.initPath('any.file') }
+        const expected = Error('Unable to obtain the initial path!')
+
+        expect(received).toThrow(expected)
+      })
+    })
+
+    describe('Without mocking anything.', () => {
+      it('Should return the current directory path!', () => {
+        const received = index.initPath('any.file')
+        const expected = expect.any(String)
+
+        expect(received).toEqual(expected)
+      })
     })
   })
 
@@ -18,29 +71,6 @@ describe('Test `index` utils.', () => {
 
       const received = index.movePath(__filename, '..')
       const expected = resolve(resolve(dir, '..'), base)
-
-      expect(received).toBe(expected)
-    })
-  })
-
-  describe('Test `validateData` util.', () => {
-    it('Should return `false` when the given value is not a stringed object!', () => {
-      const received = index.validateData('')
-      const expected = false
-
-      expect(received).toBe(expected)
-    })
-
-    it('Should return `false` when the given value is a stringed object but include `{ "name": "@mnrendra/read-package" }`!', () => {
-      const received = index.validateData('{ "name": "@mnrendra/read-package" }')
-      const expected = false
-
-      expect(received).toBe(expected)
-    })
-
-    it('Should return `true` when the given value is a stringed object and exclude `{ "name": "@mnrendra/read-package" }`!', () => {
-      const received = index.validateData('{}')
-      const expected = true
 
       expect(received).toBe(expected)
     })

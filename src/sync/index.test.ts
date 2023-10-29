@@ -1,19 +1,46 @@
 import { join } from 'path'
 import index from '.'
 
-import { read } from '@tests/mocks/sync'
 import { unmock } from '@tests/utils'
+import stackTrace from '@tests/mocks/stackTrace'
+import readSync from '@tests/mocks/readSync'
+
+jest.mock('@mnrendra/stack-trace', () => ({
+  stackTrace: jest.fn()
+}))
 
 jest.mock('./read')
 
 describe('Test `index` sync.', () => {
-  describe('By mocking `read` to return empty json string.', () => {
+  describe('By mocking `initPath` to throw an error.', () => {
     beforeAll(() => {
-      read.mockReturnValue('{}')
+      stackTrace.mockReturnValue([
+        { getFileName: () => undefined },
+        { getFileName: () => null },
+        { getFileName: () => '' }
+      ] as NodeJS.CallSite[])
     })
 
     afterAll(() => {
-      unmock(read, join(__dirname, 'read'))
+      const originalModule = jest.requireActual('@mnrendra/stack-trace')
+      stackTrace.mockImplementation(originalModule.stackTrace)
+    })
+
+    it('Should throw an error when unable to obtain the initial path!', () => {
+      const received = (): void => { index() }
+      const expected = Error('Unable to obtain the initial path!')
+
+      expect(received).toThrow(expected)
+    })
+  })
+
+  describe('By mocking `read` sync to return empty json string.', () => {
+    beforeAll(() => {
+      readSync.mockReturnValue('{}')
+    })
+
+    afterAll(() => {
+      unmock(readSync, join(__dirname, 'read'))
     })
 
     it('Should return the file data as a `string` when able to obtain the file!', () => {
@@ -24,16 +51,16 @@ describe('Test `index` sync.', () => {
     })
   })
 
-  describe('By mocking `read` to return non-json string.', () => {
+  describe('By mocking `read` sync to return non-json string.', () => {
     beforeAll(() => {
-      read.mockReturnValue('')
+      readSync.mockReturnValue('')
     })
 
     afterAll(() => {
-      unmock(read, join(__dirname, 'read'))
+      unmock(readSync, join(__dirname, 'read'))
     })
 
-    it('Should throw an error when able to obtain the file but the value is invalid!', () => {
+    it('Should throw an error when unable to obtain the file!', () => {
       const received = (): void => { index() }
       const expected = Error('Unable to obtain the file data!')
 
@@ -41,12 +68,12 @@ describe('Test `index` sync.', () => {
     })
   })
 
-  describe('Without mocking `read`.', () => {
-    it('Should throw an error when unable to obtain the file!', () => {
-      const received = (): void => { index() }
-      const expected = Error('Unable to obtain the file data!')
+  describe('Without mocking anything.', () => {
+    it('Should resolve the file data when able to obtain the file!', () => {
+      const received = index()
+      const expected = expect.any(Object)
 
-      expect(received).toThrow(expected)
+      expect(received).toEqual(expected)
     })
   })
 })

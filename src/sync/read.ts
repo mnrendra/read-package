@@ -5,10 +5,8 @@ import { readFileSync } from 'fs'
  * @param path File path.
  * @returns File data.
  */
-const read = (
-  path: string
-): string | undefined => {
-  // Try catch to handle errors.
+const read = (path: string): string | undefined => {
+  // Try catch to handle any errors.
   try {
     // Read file path.
     const data = readFileSync(path, 'utf8')

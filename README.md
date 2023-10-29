@@ -108,6 +108,7 @@ import type {
   Package // @mnrendra/types-package
 } from '@mnrendra/read-package'
 ```
+### • Package: [@mnrendra/read-package](https://www.npmjs.com/package/@mnrendra/types-package)
 
 ## License
 [MIT](https://github.com/mnrendra/read-packag/blob/HEAD/LICENSE)

@@ -15,6 +15,8 @@
       "ignoreUrls": true,
       "ignoreTemplateLiterals": true,
       "ignoreStrings": true
-    }]
+    }],
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off"
   }
 }

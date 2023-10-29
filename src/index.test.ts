@@ -1,22 +1,73 @@
-import { dirname, basename, resolve, join } from 'path'
+import { join, dirname, basename, resolve } from 'path'
 import * as utils from './utils'
 import * as index from '.'
 
 import { unmock } from '@tests/utils'
+import stackTrace from '@tests/mocks/stackTrace'
+import readAsync from '@tests/mocks/readAsync'
+import readSync from '@tests/mocks/readSync'
 
-import readAsync from '@tests/mocks/async/read'
-import readSync from '@tests/mocks/sync/read'
+jest.mock('@mnrendra/stack-trace', () => ({
+  stackTrace: jest.fn()
+}))
 
 jest.mock('./async/read')
 jest.mock('./sync/read')
 
 describe('Test utils.', () => {
   describe('Test `initPath` util.', () => {
-    it('Should return the initial path!', () => {
-      const received = utils.initPath('any.file')
-      const expected = resolve(resolve(__dirname, 'utils'), 'any.file')
+    describe('By mocking `stackTrace` to return mocked `getFileName` with positive conditions.', () => {
+      beforeAll(() => {
+        stackTrace.mockReturnValue([
+          { getFileName: () => undefined },
+          { getFileName: () => null },
+          { getFileName: () => '' },
+          { getFileName: () => resolve(__dirname, 'any.file') }
+        ] as NodeJS.CallSite[])
+      })
 
-      expect(received).toBe(expected)
+      afterAll(() => {
+        const originalModule = jest.requireActual('@mnrendra/stack-trace')
+        stackTrace.mockImplementation(originalModule.stackTrace)
+      })
+
+      it('Should return the current directory path!', () => {
+        const received = utils.initPath('any.file')
+        const expected = resolve(__dirname, 'any.file')
+
+        expect(received).toBe(expected)
+      })
+    })
+
+    describe('By mocking `stackTrace` to return mocked `getFileName` with negative conditions.', () => {
+      beforeAll(() => {
+        stackTrace.mockReturnValue([
+          { getFileName: () => undefined },
+          { getFileName: () => null },
+          { getFileName: () => '' }
+        ] as NodeJS.CallSite[])
+      })
+
+      afterAll(() => {
+        const originalModule = jest.requireActual('@mnrendra/stack-trace')
+        stackTrace.mockImplementation(originalModule.stackTrace)
+      })
+
+      it('Should throw an error when unable to obtain the initial path!', () => {
+        const received = (): void => { utils.initPath('any.file') }
+        const expected = Error('Unable to obtain the initial path!')
+
+        expect(received).toThrow(expected)
+      })
+    })
+
+    describe('Without mocking anything.', () => {
+      it('Should return the current directory path!', () => {
+        const received = utils.initPath('any.file')
+        const expected = expect.any(String)
+
+        expect(received).toEqual(expected)
+      })
     })
   })
 
@@ -31,43 +82,42 @@ describe('Test utils.', () => {
       expect(received).toBe(expected)
     })
   })
-
-  describe('Test `validateData` util.', () => {
-    it('Should return `false` when the given value is not a stringed object!', () => {
-      const received = utils.validateData('')
-      const expected = false
-
-      expect(received).toBe(expected)
-    })
-
-    it('Should return `false` when the given value is a stringed object but include `{ "name": "@mnrendra/read-package" }`!', () => {
-      const received = utils.validateData('{ "name": "@mnrendra/read-package" }')
-      const expected = false
-
-      expect(received).toBe(expected)
-    })
-
-    it('Should return `true` when the given value is a stringed object and exclude `{ "name": "@mnrendra/read-package" }`!', () => {
-      const received = utils.validateData('{}')
-      const expected = true
-
-      expect(received).toBe(expected)
-    })
-  })
 })
 
-describe('Test the root `index`.', () => {
+describe('Test all features.', () => {
   describe('Test async feature.', () => {
-    describe('By mocking `readAsync` to resolve empty json string.', () => {
+    describe('By mocking `initPath` to throw an error.', () => {
+      beforeAll(() => {
+        stackTrace.mockReturnValue([
+          { getFileName: () => undefined },
+          { getFileName: () => null },
+          { getFileName: () => '' }
+        ] as NodeJS.CallSite[])
+      })
+
+      afterAll(() => {
+        const originalModule = jest.requireActual('@mnrendra/stack-trace')
+        stackTrace.mockImplementation(originalModule.stackTrace)
+      })
+
+      it('Should throw an error when unable to obtain the initial path!', async () => {
+        const received = index.readPackage()
+        const expected = Error('Unable to obtain the initial path!')
+
+        await expect(received).rejects.toThrow(expected)
+      })
+    })
+
+    describe('By mocking `read` async to resolve empty json string.', () => {
       beforeAll(() => {
         readAsync.mockResolvedValue('{}')
       })
 
       afterAll(() => {
-        unmock(readAsync, join(__dirname, './async/read'))
+        unmock(readAsync, join(__dirname, 'async/read'))
       })
 
-      it('Should resolve the file data as a `string` when able to obtain the file!', async () => {
+      it('Should resolve the file data when able to obtain the file!', async () => {
         const received = await index.readPackage()
         const expected = expect.any(Object)
 
@@ -75,24 +125,15 @@ describe('Test the root `index`.', () => {
       })
     })
 
-    describe('By mocking `readAsync` to resolve non-json string.', () => {
+    describe('By mocking `read` async to resolve non-json string.', () => {
       beforeAll(() => {
         readAsync.mockResolvedValue('')
       })
 
       afterAll(() => {
-        unmock(readAsync, join(__dirname, './async/read'))
+        unmock(readAsync, join(__dirname, 'async/read'))
       })
 
-      it('Should throw an error when able to obtain the file but the value is invalid!', async () => {
-        const received = index.readPackage()
-        const expected = Error('Unable to obtain the file data!')
-
-        await expect(received).rejects.toThrow(expected)
-      })
-    })
-
-    describe('Without mocking `read`.', () => {
       it('Should throw an error when unable to obtain the file!', async () => {
         const received = index.readPackage()
         const expected = Error('Unable to obtain the file data!')
@@ -100,16 +141,47 @@ describe('Test the root `index`.', () => {
         await expect(received).rejects.toThrow(expected)
       })
     })
+
+    describe('Without mocking anything.', () => {
+      it('Should resolve the file data when able to obtain the file!', async () => {
+        const received = await index.readPackage()
+        const expected = expect.any(Object)
+
+        expect(received).toEqual(expected)
+      })
+    })
   })
 
   describe('Test sync feature.', () => {
-    describe('By mocking `readSync` to return empty json string.', () => {
+    describe('By mocking `initPath` to throw an error.', () => {
+      beforeAll(() => {
+        stackTrace.mockReturnValue([
+          { getFileName: () => undefined },
+          { getFileName: () => null },
+          { getFileName: () => '' }
+        ] as NodeJS.CallSite[])
+      })
+
+      afterAll(() => {
+        const originalModule = jest.requireActual('@mnrendra/stack-trace')
+        stackTrace.mockImplementation(originalModule.stackTrace)
+      })
+
+      it('Should throw an error when unable to obtain the initial path!', () => {
+        const received = (): void => { index.readPackageSync() }
+        const expected = Error('Unable to obtain the initial path!')
+
+        expect(received).toThrow(expected)
+      })
+    })
+
+    describe('By mocking `read` sync to return empty json string.', () => {
       beforeAll(() => {
         readSync.mockReturnValue('{}')
       })
 
       afterAll(() => {
-        unmock(readSync, join(__dirname, './sync/read'))
+        unmock(readSync, join(__dirname, 'sync/read'))
       })
 
       it('Should return the file data as a `string` when able to obtain the file!', () => {
@@ -120,16 +192,16 @@ describe('Test the root `index`.', () => {
       })
     })
 
-    describe('By mocking `readSync` to return non-json string.', () => {
+    describe('By mocking `read` sync to return non-json string.', () => {
       beforeAll(() => {
         readSync.mockReturnValue('')
       })
 
       afterAll(() => {
-        unmock(readSync, join(__dirname, './sync/read'))
+        unmock(readSync, join(__dirname, 'sync/read'))
       })
 
-      it('Should throw an error when able to obtain the file but the value is invalid!', () => {
+      it('Should throw an error when unable to obtain the file!', () => {
         const received = (): void => { index.readPackageSync() }
         const expected = Error('Unable to obtain the file data!')
 
@@ -137,12 +209,12 @@ describe('Test the root `index`.', () => {
       })
     })
 
-    describe('Without mocking `read`.', () => {
-      it('Should throw an error when unable to obtain the file!', () => {
-        const received = (): void => { index.readPackageSync() }
-        const expected = Error('Unable to obtain the file data!')
+    describe('Without mocking anything.', () => {
+      it('Should resolve the file data when able to obtain the file!', () => {
+        const received = index.readPackageSync()
+        const expected = expect.any(Object)
 
-        expect(received).toThrow(expected)
+        expect(received).toEqual(expected)
       })
     })
   })
