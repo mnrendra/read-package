@@ -1,7 +1,9 @@
 import { dirname, resolve } from 'path'
 import { stackTrace } from '@mnrendra/stack-trace'
 
-const EXCLUDE_STACK = '/node_modules/@mnrendra/read-package'
+const PREFIX = 'node_modules'
+const SCOPE = '@mnrendra'
+const NAME = 'read-package'
 
 /**
  * Initialize path.
@@ -12,9 +14,14 @@ const initPath = (basename: string): string => {
   // Trace the stacks.
   const stacks = stackTrace()
   // Map the stack trace paths.
-  const paths = stacks.map((stack) => stack.getFileName() || EXCLUDE_STACK)
+  const paths = stacks.map((stack) =>
+    stack.getFileName() || `${PREFIX}/${SCOPE}/${NAME}`)
   // Find the initial path.
-  const path = paths.find((path) => !path.includes(EXCLUDE_STACK))
+  const path = paths.find((path) => !(
+    path.includes(PREFIX) &&
+    path.includes(SCOPE) &&
+    path.includes(NAME)
+  ))
   // Throw an error if the path is undefined.
   if (!path) throw new Error('Unable to obtain the initial path!')
   // Get the directory name.
