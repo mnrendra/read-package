@@ -12,7 +12,7 @@ jest.mock('@mnrendra/stack-trace', () => ({
 jest.mock('./read')
 
 describe('Test `main` async.', () => {
-  describe('By mocking `initPath` to throw an error.', () => {
+  describe('By mocking `initPath` to reject with an error.', () => {
     beforeAll(() => {
       stackTrace.mockReturnValue([
         { getFileName: () => undefined },
@@ -26,7 +26,7 @@ describe('Test `main` async.', () => {
       stackTrace.mockImplementation(originalModule.stackTrace)
     })
 
-    it('Should throw an error when unable to obtain the initial path!', async () => {
+    it('Should reject with an error when unable to obtain the initial path!', async () => {
       const received = main()
       const expected = Error('Unable to obtain the initial path!')
 
@@ -34,7 +34,7 @@ describe('Test `main` async.', () => {
     })
   })
 
-  describe('By mocking `read` async to resolve empty json string.', () => {
+  describe('By mocking `read` async to resolve an empty JSON string.', () => {
     beforeAll(() => {
       readAsync.mockResolvedValue('{}')
     })
@@ -51,7 +51,7 @@ describe('Test `main` async.', () => {
     })
   })
 
-  describe('By mocking `read` async to resolve non-json string.', () => {
+  describe('By mocking `read` async to resolve a non-JSON string.', () => {
     beforeAll(() => {
       readAsync.mockResolvedValue('')
     })
@@ -60,7 +60,7 @@ describe('Test `main` async.', () => {
       unmock(readAsync, join(__dirname, 'read'))
     })
 
-    it('Should throw an error when unable to obtain the file!', async () => {
+    it('Should reject with an error when unable to obtain the file!', async () => {
       const received = main()
       const expected = Error('Unable to obtain the file data!')
 
@@ -71,6 +71,20 @@ describe('Test `main` async.', () => {
   describe('Without mocking anything.', () => {
     it('Should resolve the file data when able to obtain the file!', async () => {
       const received = await main()
+      const expected = expect.any(Object)
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should resolve the file data by adding the skipped stack!', async () => {
+      const received = await main({ skippedStacks: 'any' })
+      const expected = expect.any(Object)
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should resolve the file data by adding the skipped stacks!', async () => {
+      const received = await main({ skippedStacks: ['any'] })
       const expected = expect.any(Object)
 
       expect(received).toEqual(expected)

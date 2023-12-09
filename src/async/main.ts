@@ -1,4 +1,6 @@
 import type { Package } from '@mnrendra/types-package'
+import type { Options } from '../types'
+
 import { resolve } from 'path'
 import { initPath, movePath } from '../utils'
 import read from './read'
@@ -9,9 +11,13 @@ const TARGET_FILE = 'package.json'
  * Read `package.json` file asynchronously.
  * @returns `package.json` value.
  */
-const main = async (): Promise<Package> => {
+const main = async ({
+  skippedStacks
+}: Options = {
+  skippedStacks: []
+}): Promise<Package> => {
   // Initialize path.
-  let path = initPath(TARGET_FILE)
+  let path = initPath(TARGET_FILE, skippedStacks)
   // Read initial path.
   let data = await read(path)
 

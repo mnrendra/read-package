@@ -68,6 +68,20 @@ describe('Test utils.', () => {
 
         expect(received).toEqual(expected)
       })
+
+      it('Should return the current directory path by adding the skipped stack!', () => {
+        const received = utils.initPath('any.file', 'any')
+        const expected = expect.any(String)
+
+        expect(received).toEqual(expected)
+      })
+
+      it('Should return the current directory path by adding the skipped stacks!', () => {
+        const received = utils.initPath('any.file', ['any'])
+        const expected = expect.any(String)
+
+        expect(received).toEqual(expected)
+      })
     })
   })
 
@@ -86,7 +100,7 @@ describe('Test utils.', () => {
 
 describe('Test all features.', () => {
   describe('Test async feature.', () => {
-    describe('By mocking `initPath` to throw an error.', () => {
+    describe('By mocking `initPath` to reject with an error.', () => {
       beforeAll(() => {
         stackTrace.mockReturnValue([
           { getFileName: () => undefined },
@@ -100,7 +114,7 @@ describe('Test all features.', () => {
         stackTrace.mockImplementation(originalModule.stackTrace)
       })
 
-      it('Should throw an error when unable to obtain the initial path!', async () => {
+      it('Should reject with an error when unable to obtain the initial path!', async () => {
         const received = index.readPackage()
         const expected = Error('Unable to obtain the initial path!')
 
@@ -108,7 +122,7 @@ describe('Test all features.', () => {
       })
     })
 
-    describe('By mocking `read` async to resolve empty json string.', () => {
+    describe('By mocking `read` async to resolve an empty JSON string.', () => {
       beforeAll(() => {
         readAsync.mockResolvedValue('{}')
       })
@@ -125,7 +139,7 @@ describe('Test all features.', () => {
       })
     })
 
-    describe('By mocking `read` async to resolve non-json string.', () => {
+    describe('By mocking `read` async to resolve a non-JSON string.', () => {
       beforeAll(() => {
         readAsync.mockResolvedValue('')
       })
@@ -134,7 +148,7 @@ describe('Test all features.', () => {
         unmock(readAsync, join(__dirname, 'async/read'))
       })
 
-      it('Should throw an error when unable to obtain the file!', async () => {
+      it('Should reject with an error when unable to obtain the file!', async () => {
         const received = index.readPackage()
         const expected = Error('Unable to obtain the file data!')
 
@@ -145,6 +159,20 @@ describe('Test all features.', () => {
     describe('Without mocking anything.', () => {
       it('Should resolve the file data when able to obtain the file!', async () => {
         const received = await index.readPackage()
+        const expected = expect.any(Object)
+
+        expect(received).toEqual(expected)
+      })
+
+      it('Should resolve the file data by adding the skipped stack!', async () => {
+        const received = await index.readPackage({ skippedStacks: 'any' })
+        const expected = expect.any(Object)
+
+        expect(received).toEqual(expected)
+      })
+
+      it('Should resolve the file data by adding the skipped stacks!', async () => {
+        const received = await index.readPackage({ skippedStacks: ['any'] })
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
@@ -175,7 +203,7 @@ describe('Test all features.', () => {
       })
     })
 
-    describe('By mocking `read` sync to return empty json string.', () => {
+    describe('By mocking `read` sync to return an empty JSON string.', () => {
       beforeAll(() => {
         readSync.mockReturnValue('{}')
       })
@@ -192,7 +220,7 @@ describe('Test all features.', () => {
       })
     })
 
-    describe('By mocking `read` sync to return non-json string.', () => {
+    describe('By mocking `read` sync to return a non-JSON string.', () => {
       beforeAll(() => {
         readSync.mockReturnValue('')
       })
@@ -210,8 +238,22 @@ describe('Test all features.', () => {
     })
 
     describe('Without mocking anything.', () => {
-      it('Should resolve the file data when able to obtain the file!', () => {
+      it('Should return the file data when able to obtain the file!', () => {
         const received = index.readPackageSync()
+        const expected = expect.any(Object)
+
+        expect(received).toEqual(expected)
+      })
+
+      it('Should return the file data by adding the skipped stack!', () => {
+        const received = index.readPackageSync({ skippedStacks: 'any' })
+        const expected = expect.any(Object)
+
+        expect(received).toEqual(expected)
+      })
+
+      it('Should return the file data by adding the skipped stacks!', () => {
+        const received = index.readPackageSync({ skippedStacks: ['any'] })
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
