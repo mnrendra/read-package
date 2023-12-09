@@ -1,9 +1,12 @@
 import type { Package } from '@mnrendra/types-package'
+import type { Options } from './types'
+
 import mainAsync from './async'
 import mainSync from './sync'
 
 export type {
-  Package
+  Package,
+  Options
 }
 
 export {
