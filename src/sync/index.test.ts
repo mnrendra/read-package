@@ -34,7 +34,7 @@ describe('Test `index` sync.', () => {
     })
   })
 
-  describe('By mocking `read` sync to return empty json string.', () => {
+  describe('By mocking `read` sync to return an empty JSON string.', () => {
     beforeAll(() => {
       readSync.mockReturnValue('{}')
     })
@@ -51,7 +51,7 @@ describe('Test `index` sync.', () => {
     })
   })
 
-  describe('By mocking `read` sync to return non-json string.', () => {
+  describe('By mocking `read` sync to return a non-JSON string.', () => {
     beforeAll(() => {
       readSync.mockReturnValue('')
     })
@@ -69,8 +69,22 @@ describe('Test `index` sync.', () => {
   })
 
   describe('Without mocking anything.', () => {
-    it('Should resolve the file data when able to obtain the file!', () => {
+    it('Should return the file data when able to obtain the file!', () => {
       const received = index()
+      const expected = expect.any(Object)
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return the file data by adding the skipped stack!', () => {
+      const received = index({ skippedStacks: 'any' })
+      const expected = expect.any(Object)
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return the file data by adding the skipped stacks!', () => {
+      const received = index({ skippedStacks: ['any'] })
       const expected = expect.any(Object)
 
       expect(received).toEqual(expected)

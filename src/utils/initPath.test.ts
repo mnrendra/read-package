@@ -60,5 +60,19 @@ describe('Test `initPath` util.', () => {
 
       expect(received).toEqual(expected)
     })
+
+    it('Should return the current directory path by adding the skipped stack!', () => {
+      const received = initPath('any.file', 'any')
+      const expected = expect.any(String)
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return the current directory path by adding the skipped stacks!', () => {
+      const received = initPath('any.file', ['any'])
+      const expected = expect.any(String)
+
+      expect(received).toEqual(expected)
+    })
   })
 })
