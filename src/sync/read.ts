@@ -2,14 +2,17 @@ import { readFileSync } from 'fs'
 
 /**
  * Read file synchronously.
- * @param path File path.
- * @returns File data.
+ * @param path File path
+ * @returns File data
  */
-const read = (path: string): string | undefined => {
+const read = (
+  path: string
+): string | undefined => {
   // Try catch to handle any errors.
   try {
     // Read file path.
     const data = readFileSync(path, 'utf8')
+
     // Return file data.
     return data
   } catch (err) {

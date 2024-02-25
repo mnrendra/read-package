@@ -1,9 +1,10 @@
 import { join } from 'path'
-import index from '.'
 
-import { unmock } from '@tests/utils'
 import stackTrace from '@tests/mocks/stackTrace'
 import readAsync from '@tests/mocks/readAsync'
+import { unmock } from '@tests/utils'
+
+import index from '.'
 
 jest.mock('@mnrendra/stack-trace', () => ({
   stackTrace: jest.fn()
@@ -76,14 +77,14 @@ describe('Test `index` async.', () => {
       expect(received).toEqual(expected)
     })
 
-    it('Should resolve the file data by adding the skipped stack!', async () => {
+    it('Should resolve the file data by adding a skipped stack!', async () => {
       const received = await index({ skippedStacks: 'any' })
       const expected = expect.any(Object)
 
       expect(received).toEqual(expected)
     })
 
-    it('Should resolve the file data by adding the skipped stacks!', async () => {
+    it('Should resolve the file data by adding a list of skipped stacks!', async () => {
       const received = await index({ skippedStacks: ['any'] })
       const expected = expect.any(Object)
 

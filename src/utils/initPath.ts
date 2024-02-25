@@ -1,11 +1,12 @@
 import type { SkippedStacks } from '../types'
 
 import { dirname, resolve } from 'path'
+
 import { stackTrace } from '@mnrendra/stack-trace'
 
-const PREFIX = 'node_modules'
-const SCOPE = '@mnrendra'
-const NAME = 'read-package'
+import { SKIPPED_STACK } from '../consts'
+
+import validateSkippedStacks from './validateSkippedStacks'
 
 /**
  * Initialize path.
@@ -17,27 +18,18 @@ const initPath = (
   basename: string,
   skippedStacks: SkippedStacks = []
 ): string => {
-  // Trace the stacks.
+  // Trace stacks.
   const stacks = stackTrace()
 
-  // Map the stack trace paths.
-  const paths = stacks.map((stack) =>
-    stack.getFileName() || `${PREFIX}/${SCOPE}/${NAME}`)
+  // Map stack trace paths.
+  const paths = stacks.map((stack) => stack.getFileName() || SKIPPED_STACK)
 
-  // validate skipped stacks.
-  const ignoreStacks = !Array.isArray(skippedStacks)
-    ? [`${skippedStacks}`]
-    : skippedStacks
+  // Validate skipped stacks.
+  const validSkippedStacks = validateSkippedStacks(skippedStacks)
 
   // Find the initial path.
   const path = paths.find((path) => !(
-    (
-      path.includes(PREFIX) &&
-      path.includes(SCOPE) &&
-      path.includes(NAME)
-    ) || (
-      ignoreStacks.some((skippedStack) => path.includes(skippedStack))
-    )
+    validSkippedStacks.some((skippedStack) => path.includes(skippedStack))
   ))
 
   // Throw an error if the path is undefined.
