@@ -2,9 +2,9 @@ import { basename, dirname, resolve } from 'path'
 
 /**
  * Move path.
- * @param path Path to be moved.
- * @param aim Aimed directory.
- * @returns Moved path.
+ * @param path Path to be moved
+ * @param aim Aimed directory
+ * @returns Moved path
  */
 const movePath = (path: string, aim: string): string => {
   // Get the base name.

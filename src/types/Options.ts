@@ -1,7 +1,7 @@
 import type SkippedStacks from './SkippedStacks'
 
 interface Options {
-  skippedStacks: SkippedStacks
+  skippedStacks?: SkippedStacks
 }
 
 export default Options

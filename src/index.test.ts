@@ -1,17 +1,21 @@
 import { join, dirname, basename, resolve } from 'path'
-import * as utils from './utils'
-import * as index from '.'
 
-import { unmock } from '@tests/utils'
 import stackTrace from '@tests/mocks/stackTrace'
 import readAsync from '@tests/mocks/readAsync'
 import readSync from '@tests/mocks/readSync'
+import { unmock } from '@tests/utils'
+import { validSkippedStacks } from '@tests/stubs'
+
+import { validateSkippedStacks, movePath, initPath } from './utils'
+
+import { readPackage, readPackageSync } from '.'
 
 jest.mock('@mnrendra/stack-trace', () => ({
   stackTrace: jest.fn()
 }))
 
 jest.mock('./async/read')
+
 jest.mock('./sync/read')
 
 describe('Test utils.', () => {
@@ -32,7 +36,7 @@ describe('Test utils.', () => {
       })
 
       it('Should return the current directory path!', () => {
-        const received = utils.initPath('any.file')
+        const received = initPath('any.file')
         const expected = resolve(__dirname, 'any.file')
 
         expect(received).toBe(expected)
@@ -54,7 +58,7 @@ describe('Test utils.', () => {
       })
 
       it('Should throw an error when unable to obtain the initial path!', () => {
-        const received = (): void => { utils.initPath('any.file') }
+        const received = (): void => { initPath('any.file') }
         const expected = Error('Unable to obtain the initial path!')
 
         expect(received).toThrow(expected)
@@ -63,21 +67,21 @@ describe('Test utils.', () => {
 
     describe('Without mocking anything.', () => {
       it('Should return the current directory path!', () => {
-        const received = utils.initPath('any.file')
+        const received = initPath('any.file')
         const expected = expect.any(String)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should return the current directory path by adding the skipped stack!', () => {
-        const received = utils.initPath('any.file', 'any')
+      it('Should return the current directory path by adding a skipped stack!', () => {
+        const received = initPath('any.file', 'any')
         const expected = expect.any(String)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should return the current directory path by adding the skipped stacks!', () => {
-        const received = utils.initPath('any.file', ['any'])
+      it('Should return the current directory path by adding a list of skipped stacks!', () => {
+        const received = initPath('any.file', ['any'])
         const expected = expect.any(String)
 
         expect(received).toEqual(expected)
@@ -90,16 +94,39 @@ describe('Test utils.', () => {
       const base = basename(__filename)
       const dir = dirname(__filename)
 
-      const received = utils.movePath(__filename, '..')
+      const received = movePath(__filename, '..')
       const expected = resolve(resolve(dir, '..'), base)
 
       expect(received).toBe(expected)
     })
   })
+
+  describe('Test `validateSkippedStacks` util.', () => {
+    it('Should return the default value when given an empty argument!', () => {
+      const received = validateSkippedStacks()
+      const expected = validSkippedStacks()
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return the default value with additional `skippedStacks` when given a `skippedStacks` option with a string!', () => {
+      const received = validateSkippedStacks('any')
+      const expected = [...validSkippedStacks(), 'any']
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return the default value with additional `skippedStacks` when given a `skippedStacks` option with a list of strings!', () => {
+      const received = validateSkippedStacks(['any'])
+      const expected = [...validSkippedStacks(), 'any']
+
+      expect(received).toEqual(expected)
+    })
+  })
 })
 
 describe('Test all features.', () => {
-  describe('Test async feature.', () => {
+  describe('Test `async` feature.', () => {
     describe('By mocking `initPath` to reject with an error.', () => {
       beforeAll(() => {
         stackTrace.mockReturnValue([
@@ -115,7 +142,7 @@ describe('Test all features.', () => {
       })
 
       it('Should reject with an error when unable to obtain the initial path!', async () => {
-        const received = index.readPackage()
+        const received = readPackage()
         const expected = Error('Unable to obtain the initial path!')
 
         await expect(received).rejects.toThrow(expected)
@@ -132,7 +159,7 @@ describe('Test all features.', () => {
       })
 
       it('Should resolve the file data when able to obtain the file!', async () => {
-        const received = await index.readPackage()
+        const received = await readPackage()
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
@@ -149,7 +176,7 @@ describe('Test all features.', () => {
       })
 
       it('Should reject with an error when unable to obtain the file!', async () => {
-        const received = index.readPackage()
+        const received = readPackage()
         const expected = Error('Unable to obtain the file data!')
 
         await expect(received).rejects.toThrow(expected)
@@ -158,21 +185,21 @@ describe('Test all features.', () => {
 
     describe('Without mocking anything.', () => {
       it('Should resolve the file data when able to obtain the file!', async () => {
-        const received = await index.readPackage()
+        const received = await readPackage()
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should resolve the file data by adding the skipped stack!', async () => {
-        const received = await index.readPackage({ skippedStacks: 'any' })
+      it('Should resolve the file data by adding a skipped stack!', async () => {
+        const received = await readPackage({ skippedStacks: 'any' })
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should resolve the file data by adding the skipped stacks!', async () => {
-        const received = await index.readPackage({ skippedStacks: ['any'] })
+      it('Should resolve the file data by adding a list of skipped stacks!', async () => {
+        const received = await readPackage({ skippedStacks: ['any'] })
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
@@ -180,7 +207,7 @@ describe('Test all features.', () => {
     })
   })
 
-  describe('Test sync feature.', () => {
+  describe('Test `sync` feature.', () => {
     describe('By mocking `initPath` to throw an error.', () => {
       beforeAll(() => {
         stackTrace.mockReturnValue([
@@ -196,7 +223,7 @@ describe('Test all features.', () => {
       })
 
       it('Should throw an error when unable to obtain the initial path!', () => {
-        const received = (): void => { index.readPackageSync() }
+        const received = (): void => { readPackageSync() }
         const expected = Error('Unable to obtain the initial path!')
 
         expect(received).toThrow(expected)
@@ -213,7 +240,7 @@ describe('Test all features.', () => {
       })
 
       it('Should return the file data as a `string` when able to obtain the file!', () => {
-        const received = index.readPackageSync()
+        const received = readPackageSync()
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
@@ -230,7 +257,7 @@ describe('Test all features.', () => {
       })
 
       it('Should throw an error when unable to obtain the file!', () => {
-        const received = (): void => { index.readPackageSync() }
+        const received = (): void => { readPackageSync() }
         const expected = Error('Unable to obtain the file data!')
 
         expect(received).toThrow(expected)
@@ -239,21 +266,21 @@ describe('Test all features.', () => {
 
     describe('Without mocking anything.', () => {
       it('Should return the file data when able to obtain the file!', () => {
-        const received = index.readPackageSync()
+        const received = readPackageSync()
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should return the file data by adding the skipped stack!', () => {
-        const received = index.readPackageSync({ skippedStacks: 'any' })
+      it('Should return the file data by adding a skipped stack!', () => {
+        const received = readPackageSync({ skippedStacks: 'any' })
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should return the file data by adding the skipped stacks!', () => {
-        const received = index.readPackageSync({ skippedStacks: ['any'] })
+      it('Should return the file data by adding a list of skipped stacks!', () => {
+        const received = readPackageSync({ skippedStacks: ['any'] })
         const expected = expect.any(Object)
 
         expect(received).toEqual(expected)

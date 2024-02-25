@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+
 import read from './read'
 
 describe('Test `read` async.', () => {
