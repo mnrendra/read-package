@@ -1,7 +1,9 @@
 import { basename, dirname, resolve } from 'path'
-import * as index from '.'
 
 import stackTrace from '@tests/mocks/stackTrace'
+import { validSkippedStacks } from '@tests/stubs'
+
+import { initPath, movePath, validateSkippedStacks } from '.'
 
 jest.mock('@mnrendra/stack-trace', () => ({
   stackTrace: jest.fn()
@@ -25,7 +27,7 @@ describe('Test `index` utils.', () => {
       })
 
       it('Should return the current directory path!', () => {
-        const received = index.initPath('any.file')
+        const received = initPath('any.file')
         const expected = resolve(__dirname, 'any.file')
 
         expect(received).toBe(expected)
@@ -47,7 +49,7 @@ describe('Test `index` utils.', () => {
       })
 
       it('Should throw an error when unable to obtain the initial path!', () => {
-        const received = (): void => { index.initPath('any.file') }
+        const received = (): void => { initPath('any.file') }
         const expected = Error('Unable to obtain the initial path!')
 
         expect(received).toThrow(expected)
@@ -56,21 +58,21 @@ describe('Test `index` utils.', () => {
 
     describe('Without mocking anything.', () => {
       it('Should return the current directory path!', () => {
-        const received = index.initPath('any.file')
+        const received = initPath('any.file')
         const expected = expect.any(String)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should return the current directory path by adding the skipped stack!', () => {
-        const received = index.initPath('any.file', 'any')
+      it('Should return the current directory path by adding a skipped stack!', () => {
+        const received = initPath('any.file', 'any')
         const expected = expect.any(String)
 
         expect(received).toEqual(expected)
       })
 
-      it('Should return the current directory path by adding the skipped stacks!', () => {
-        const received = index.initPath('any.file', ['any'])
+      it('Should return the current directory path by adding a list of skipped stacks!', () => {
+        const received = initPath('any.file', ['any'])
         const expected = expect.any(String)
 
         expect(received).toEqual(expected)
@@ -83,10 +85,33 @@ describe('Test `index` utils.', () => {
       const base = basename(__filename)
       const dir = dirname(__filename)
 
-      const received = index.movePath(__filename, '..')
+      const received = movePath(__filename, '..')
       const expected = resolve(resolve(dir, '..'), base)
 
       expect(received).toBe(expected)
+    })
+  })
+
+  describe('Test `validateSkippedStacks` util.', () => {
+    it('Should return the default value when given an empty argument!', () => {
+      const received = validateSkippedStacks()
+      const expected = validSkippedStacks()
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return the default value with additional `skippedStacks` when given a `skippedStacks` option with a string!', () => {
+      const received = validateSkippedStacks('any')
+      const expected = [...validSkippedStacks(), 'any']
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return the default value with additional `skippedStacks` when given a `skippedStacks` option with a list of strings!', () => {
+      const received = validateSkippedStacks(['any'])
+      const expected = [...validSkippedStacks(), 'any']
+
+      expect(received).toEqual(expected)
     })
   })
 })
