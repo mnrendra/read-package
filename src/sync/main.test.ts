@@ -2,7 +2,7 @@ import { join } from 'path'
 
 import stackTrace from '@tests/mocks/stackTrace'
 import readSync from '@tests/mocks/readSync'
-import { unmock } from '@tests/utils'
+import unmock from '@tests/utils/unmock'
 
 import main from './main'
 
@@ -12,8 +12,8 @@ jest.mock('@mnrendra/stack-trace', () => ({
 
 jest.mock('./read')
 
-describe('Test `main` sync.', () => {
-  describe('By mocking `initPath` to throw an error.', () => {
+describe('Test `main` sync:', () => {
+  describe('By mocking `initPath` to throw an error:', () => {
     beforeAll(() => {
       stackTrace.mockReturnValue([
         { getFileName: () => undefined },
@@ -35,7 +35,7 @@ describe('Test `main` sync.', () => {
     })
   })
 
-  describe('By mocking `read` sync to return an empty JSON string.', () => {
+  describe('By mocking `read` sync to return an empty JSON string:', () => {
     beforeAll(() => {
       readSync.mockReturnValue('{}')
     })
@@ -52,7 +52,7 @@ describe('Test `main` sync.', () => {
     })
   })
 
-  describe('By mocking `read` sync to return a non-JSON string.', () => {
+  describe('By mocking `read` sync to return a non-JSON string:', () => {
     beforeAll(() => {
       readSync.mockReturnValue('')
     })
@@ -69,7 +69,7 @@ describe('Test `main` sync.', () => {
     })
   })
 
-  describe('Without mocking anything.', () => {
+  describe('Without mocking anything:', () => {
     it('Should return the file data when able to obtain the file!', () => {
       const received = main()
       const expected = expect.any(Object)

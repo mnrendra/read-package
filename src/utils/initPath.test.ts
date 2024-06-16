@@ -1,14 +1,15 @@
 import { resolve } from 'path'
-import initPath from './initPath'
 
 import stackTrace from '@tests/mocks/stackTrace'
+
+import initPath from './initPath'
 
 jest.mock('@mnrendra/stack-trace', () => ({
   stackTrace: jest.fn()
 }))
 
-describe('Test `initPath` util.', () => {
-  describe('By mocking `stackTrace` to return mocked `getFileName` with positive conditions.', () => {
+describe('Test `initPath` util:', () => {
+  describe('By mocking `stackTrace` to return mocked `getFileName` with positive conditions:', () => {
     beforeAll(() => {
       stackTrace.mockReturnValue([
         { getFileName: () => undefined },
@@ -31,7 +32,7 @@ describe('Test `initPath` util.', () => {
     })
   })
 
-  describe('By mocking `stackTrace` to return mocked `getFileName` with negative conditions.', () => {
+  describe('By mocking `stackTrace` to return mocked `getFileName` with negative conditions:', () => {
     beforeAll(() => {
       stackTrace.mockReturnValue([
         { getFileName: () => undefined },
@@ -53,7 +54,7 @@ describe('Test `initPath` util.', () => {
     })
   })
 
-  describe('Without mocking anything.', () => {
+  describe('Without mocking anything:', () => {
     it('Should return the current directory path!', () => {
       const received = initPath('any.file')
       const expected = expect.any(String)

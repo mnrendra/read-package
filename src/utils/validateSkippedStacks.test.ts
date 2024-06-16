@@ -1,8 +1,8 @@
-import { validSkippedStacks } from '@tests/stubs'
+import validSkippedStacks from '@tests/stubs/validSkippedStacks'
 
 import validateSkippedStacks from './validateSkippedStacks'
 
-describe('Test `validateSkippedStacks` util.', () => {
+describe('Test `validateSkippedStacks` util:', () => {
   it('Should return the default value when given an empty argument!', () => {
     const received = validateSkippedStacks()
     const expected = validSkippedStacks()

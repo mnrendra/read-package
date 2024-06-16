@@ -2,7 +2,7 @@ import { resolve } from 'path'
 
 import read from './read'
 
-describe('Test `read` sync.', () => {
+describe('Test `read` sync:', () => {
   it('Should return `undefined` when unable to read the file!', () => {
     const received = read(resolve(__dirname, 'file.name'))
     const expected = undefined

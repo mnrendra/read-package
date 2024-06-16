@@ -1,6 +1,6 @@
-import * as readAsync from './readAsync'
-import * as readSync from './readSync'
-import * as stackTrace from './stackTrace'
+import readAsync from './readAsync'
+import readSync from './readSync'
+import stackTrace from './stackTrace'
 
 export {
   readAsync,
