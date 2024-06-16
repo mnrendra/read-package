@@ -1,7 +1,8 @@
 import { basename, dirname, resolve } from 'path'
+
 import movePath from './movePath'
 
-describe('Test `movePath` util.', () => {
+describe('Test `movePath` util:', () => {
   it('Should return the file path in the parent directory!', () => {
     const base = basename(__filename)
     const dir = dirname(__filename)
