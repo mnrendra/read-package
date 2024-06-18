@@ -66,9 +66,10 @@ console.log('synchronously:', name, version) // Output: synchronously: project-n
 import { readPackage } from '@mnrendra/read-package'
 
 // Asynchronously
-readPackage().then(({ name, version }) => {
-  console.log('asynchronously:', name, version) // Output: asynchronously: project-name 1.0.0
-})
+readPackage()
+  .then(({ name, version }) => {
+    console.log('asynchronously:', name, version) // Output: asynchronously: project-name 1.0.0
+  })
 ```
 
 #### 2. Read the `package.json` file in your published module:
@@ -99,9 +100,10 @@ console.log('synchronously:', name, version); // Output: synchronously: module-n
 const { readPackage } = require('@mnrendra/read-package');
 
 // Asynchronously
-readPackage().then(({ name, version }) => {
-  console.log('asynchronously:', name, version); // Output: asynchronously: module-name 1.0.0
-});
+readPackage()
+  .then(({ name, version }) => {
+    console.log('asynchronously:', name, version); // Output: asynchronously: module-name 1.0.0
+  });
 ```
 
 # Types
@@ -115,7 +117,7 @@ import type {
 ### • [Options](https://github.com/mnrendra/read-package/blob/main/src/types/Options.ts)
 
 ## License
-[MIT](https://github.com/mnrendra/read-packag/blob/HEAD/LICENSE)
+[MIT](https://github.com/mnrendra/read-package/blob/HEAD/LICENSE)
 
 ## Author
 [@mnrendra](https://github.com/mnrendra)
