@@ -1,4 +1,4 @@
-import type SkippedStacks from './SkippedStacks'
+import type { SkippedStacks } from '@mnrendra/validate-skipped-stacks'
 
 interface Options {
   skippedStacks?: SkippedStacks

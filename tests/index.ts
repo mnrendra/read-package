@@ -1,9 +1,7 @@
 import * as mocks from './mocks'
-import * as stubs from './stubs'
-import * as utils from './utils'
+import * as unmocks from './unmocks'
 
 export {
   mocks,
-  utils,
-  stubs
+  unmocks
 }

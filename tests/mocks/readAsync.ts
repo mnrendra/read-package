@@ -1,5 +1,5 @@
-import originalModule from '../../src/async/read'
+import * as originalModule from '@mnrendra/read-stacked-file'
 
-const mockedModule = originalModule as jest.Mock
+const { read } = originalModule as jest.Mocked<typeof originalModule>
 
-export default mockedModule
+export default read
