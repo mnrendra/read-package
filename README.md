@@ -13,9 +13,10 @@ Using `CommonJS`:
 const { readPackage, readPackageSync } = require('@mnrendra/read-package')
 
 // Asynchronously
-readPackage().then(({ name, version }) => {
-  console.log('asynchronously:', name, version)
-})
+readPackage()
+  .then(({ name, version }) => {
+    console.log('asynchronously:', name, version)
+  })
 
 // Synchronously
 const { name, version } = readPackageSync()
@@ -27,9 +28,10 @@ Using `ES Module`:
 import { readPackage, readPackageSync } from '@mnrendra/read-package'
 
 // Asynchronously
-readPackage().then(({ name, version }) => {
-  console.log('asynchronously:', name, version)
-})
+readPackage()
+  .then(({ name, version }) => {
+    console.log('asynchronously:', name, version)
+  })
 
 // Synchronously
 const { name, version } = readPackageSync()
@@ -52,7 +54,7 @@ Here are some examples:<br/>
 
 ##### • Read from `~/project-name/src/index.js`:
 ```javascript
-const { readPackage } = require('@mnrendra/read-package')
+const { readPackageSync } = require('@mnrendra/read-package')
 
 // Synchronously
 const { name, version } = readPackageSync()
@@ -61,12 +63,13 @@ console.log('synchronously:', name, version) // Output: synchronously: project-n
 
 ##### • Read from `~/project-name/src/any-directory/index.mjs`:
 ```javascript
-import { readPackageSync } from '@mnrendra/read-package'
+import { readPackage } from '@mnrendra/read-package'
 
 // Asynchronously
-readPackage().then(({ name, version }) => {
-  console.log('asynchronously:', name, version) // Output: asynchronously: project-name 1.0.0
-})
+readPackage()
+  .then(({ name, version }) => {
+    console.log('asynchronously:', name, version) // Output: asynchronously: project-name 1.0.0
+  })
 ```
 
 #### 2. Read the `package.json` file in your published module:
@@ -84,7 +87,7 @@ Here are some examples:<br/>
 ##### • Read from `/consumer/node_modules/module-name/dist/index.js`:
 ```javascript
 "use strict";
-const { readPackage } = require('@mnrendra/read-package');
+const { readPackageSync } = require('@mnrendra/read-package');
 
 // Synchronously
 const { name, version } = readPackageSync();
@@ -97,21 +100,24 @@ console.log('synchronously:', name, version); // Output: synchronously: module-n
 const { readPackage } = require('@mnrendra/read-package');
 
 // Asynchronously
-readPackage().then(({ name, version }) => {
-  console.log('asynchronously:', name, version); // Output: asynchronously: module-name 1.0.0
-});
+readPackage()
+  .then(({ name, version }) => {
+    console.log('asynchronously:', name, version); // Output: asynchronously: module-name 1.0.0
+  });
 ```
 
 # Types
 ```typescript
 import type {
-  Package // @mnrendra/types-package
+  Package, // @mnrendra/types-package
+  Options
 } from '@mnrendra/read-package'
 ```
-### • Package: [@mnrendra/read-package](https://www.npmjs.com/package/@mnrendra/types-package)
+### • [Package](https://www.npmjs.com/package/@mnrendra/types-package)
+### • [Options](https://github.com/mnrendra/read-package/blob/main/src/types/Options.ts)
 
 ## License
-[MIT](https://github.com/mnrendra/read-packag/blob/HEAD/LICENSE)
+[MIT](https://github.com/mnrendra/read-package/blob/HEAD/LICENSE)
 
 ## Author
 [@mnrendra](https://github.com/mnrendra)
