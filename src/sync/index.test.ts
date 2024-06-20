@@ -1,8 +1,9 @@
-import { join } from 'path'
+import { TARGET_FILE } from '@consts'
 
-import stackTrace from '@tests/mocks/stackTrace'
-import readSync from '@tests/mocks/readSync'
-import unmock from '@tests/utils/unmock'
+import mockedReadSync from '@tests/mocks/readSync'
+import mockedStackTrace from '@tests/mocks/stackTrace'
+import unmockReadSync from '@tests/unmocks/readSync'
+import unmockStackTrace from '@tests/unmocks/stackTrace'
 
 import index from '.'
 
@@ -10,12 +11,15 @@ jest.mock('@mnrendra/stack-trace', () => ({
   stackTrace: jest.fn()
 }))
 
-jest.mock('./read')
+jest.mock('@mnrendra/read-stacked-file', () => ({
+  readSync: jest.fn()
+}))
 
 describe('Test `index` sync:', () => {
-  describe('By mocking `initPath` to throw an error:', () => {
+  describe('By mocking `@mnrendra/stack-trace` to return an invalid value:', () => {
     beforeAll(() => {
-      stackTrace.mockReturnValue([
+      unmockReadSync(mockedReadSync)
+      mockedStackTrace.mockReturnValue([
         { getFileName: () => undefined },
         { getFileName: () => null },
         { getFileName: () => '' }
@@ -23,28 +27,28 @@ describe('Test `index` sync:', () => {
     })
 
     afterAll(() => {
-      const originalModule = jest.requireActual('@mnrendra/stack-trace')
-      stackTrace.mockImplementation(originalModule.stackTrace)
+      unmockStackTrace(mockedStackTrace)
     })
 
-    it('Should throw an error when unable to obtain the initial path!', () => {
+    it('Should throw an error when unable to locate the initial path!', () => {
       const received = (): void => { index() }
-      const expected = Error('Unable to obtain the initial path!')
+      const expected = Error(`Unable to locate the initial path of "${TARGET_FILE}".`)
 
       expect(received).toThrow(expected)
     })
   })
 
-  describe('By mocking `read` sync to return an empty JSON string:', () => {
+  describe('By mocking `@mnrendra/read-stacked-file` to return an empty JSON string:', () => {
     beforeAll(() => {
-      readSync.mockReturnValue('{}')
+      unmockStackTrace(mockedStackTrace)
+      mockedReadSync.mockReturnValue('{}')
     })
 
     afterAll(() => {
-      unmock(readSync, join(__dirname, 'read'))
+      unmockReadSync(mockedReadSync)
     })
 
-    it('Should return the file data as a `string` when able to obtain the file!', () => {
+    it('Should return a valid value when able to obtain the file!', () => {
       const received = index()
       const expected = expect.any(Object)
 
@@ -52,39 +56,40 @@ describe('Test `index` sync:', () => {
     })
   })
 
-  describe('By mocking `read` sync to return a non-JSON string:', () => {
+  describe('By mocking `@mnrendra/read-stacked-file` to return a non-JSON string:', () => {
     beforeAll(() => {
-      readSync.mockReturnValue('')
+      unmockStackTrace(mockedStackTrace)
+      mockedReadSync.mockReturnValue('')
     })
 
     afterAll(() => {
-      unmock(readSync, join(__dirname, 'read'))
+      unmockReadSync(mockedReadSync)
     })
 
-    it('Should throw an error when unable to obtain the file!', () => {
+    it('Should throw an error when unable to parse the file!', () => {
       const received = (): void => { index() }
-      const expected = Error('Unable to obtain the file data!')
+      const expected = Error(`"${TARGET_FILE}" value cannot be parsed.`)
 
       expect(received).toThrow(expected)
     })
   })
 
   describe('Without mocking anything:', () => {
-    it('Should return the file data when able to obtain the file!', () => {
+    it('Should return a valid value when able to obtain the file!', () => {
       const received = index()
       const expected = expect.any(Object)
 
       expect(received).toEqual(expected)
     })
 
-    it('Should return the file data by adding a skipped stack!', () => {
+    it('Should return a valid value by adding a skipped stack!', () => {
       const received = index({ skippedStacks: 'any' })
       const expected = expect.any(Object)
 
       expect(received).toEqual(expected)
     })
 
-    it('Should return the file data by adding a list of skipped stacks!', () => {
+    it('Should return a valid value by adding a list of skipped stacks!', () => {
       const received = index({ skippedStacks: ['any'] })
       const expected = expect.any(Object)
 
