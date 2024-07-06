@@ -1,16 +1,17 @@
-import type { Package } from '@mnrendra/types-package'
-
-import type { Options } from './types'
+import { validateSkippedStacks } from '@mnrendra/read-stacked-json'
 
 import mainAsync from './async'
 import mainSync from './sync'
 
 export type {
   Package,
-  Options
-}
+  Options,
+  SkippedStacks,
+  ValidSkippedStacks
+} from './types'
 
 export {
   mainAsync as readPackage,
-  mainSync as readPackageSync
+  mainSync as readPackageSync,
+  validateSkippedStacks
 }

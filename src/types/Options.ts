@@ -1,7 +1,8 @@
-import type { SkippedStacks } from '@mnrendra/validate-skipped-stacks'
+import type { SkippedStacks } from '.'
 
 interface Options {
   skippedStacks?: SkippedStacks
+  stackTraceLimit?: number
 }
 
 export default Options
