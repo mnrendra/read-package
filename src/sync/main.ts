@@ -16,16 +16,19 @@ import { readSync } from '@mnrendra/read-stacked-json'
  * @returns {Package} `package.json` JSON value.
  */
 const main = ({
-  skippedStacks
+  skippedStacks,
+  stackTraceLimit
 }: Options = {
-  skippedStacks: []
+  skippedStacks: [],
+  stackTraceLimit: 10
 }): Package => {
   // Validate skipped stacks.
   const validSkippedStacks = validateSkippedStacks(SKIPPED_STACK, skippedStacks)
 
   // Read `package.json` JSON synchronously.
   const data = readSync<Package>(TARGET_FILE, {
-    skippedStacks: validSkippedStacks
+    skippedStacks: validSkippedStacks,
+    stackTraceLimit
   })
 
   // Return `package.json` JSON value.

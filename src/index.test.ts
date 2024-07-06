@@ -1,4 +1,4 @@
-import { TARGET_FILE } from '@consts'
+import { TARGET_FILE } from '@/consts'
 
 import mockedReadAsync from '@tests/mocks/readAsync'
 import mockedReadSync from '@tests/mocks/readSync'
@@ -7,7 +7,11 @@ import unmockReadAsync from '@tests/unmocks/readAsync'
 import unmockReadSync from '@tests/unmocks/readSync'
 import unmockStackTrace from '@tests/unmocks/stackTrace'
 
-import { readPackage, readPackageSync } from '.'
+import {
+  readPackage,
+  readPackageSync,
+  validateSkippedStacks
+} from '.'
 
 jest.mock('@mnrendra/stack-trace', () => ({
   stackTrace: jest.fn()
@@ -182,6 +186,29 @@ describe('Test all features:', () => {
 
         expect(received).toEqual(expected)
       })
+    })
+  })
+
+  describe('Test `validateSkippedStacks` util:', () => {
+    it('Should return a valid skipped-stacks when given a skipped-stack!', () => {
+      const received = validateSkippedStacks('any')
+      const expected = ['any']
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return a valid skipped-stacks when given a skipped-stack and a `skippedStacks` option with a string!', () => {
+      const received = validateSkippedStacks('any', 'any')
+      const expected = ['any', 'any']
+
+      expect(received).toEqual(expected)
+    })
+
+    it('Should return a valid skipped-stacks when given a skipped-stack and a `skippedStacks` option with a list of strings!', () => {
+      const received = validateSkippedStacks('any', ['any'])
+      const expected = ['any', 'any']
+
+      expect(received).toEqual(expected)
     })
   })
 })

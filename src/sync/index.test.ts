@@ -1,4 +1,4 @@
-import { TARGET_FILE } from '@consts'
+import { TARGET_FILE } from '@/consts'
 
 import mockedReadSync from '@tests/mocks/readSync'
 import mockedStackTrace from '@tests/mocks/stackTrace'

@@ -16,16 +16,19 @@ import { read } from '@mnrendra/read-stacked-json'
  * @returns {Promise<Package>} `package.json` JSON value.
  */
 const main = async ({
-  skippedStacks
+  skippedStacks,
+  stackTraceLimit
 }: Options = {
-  skippedStacks: []
+  skippedStacks: [],
+  stackTraceLimit: 10
 }): Promise<Package> => {
   // Validate skipped stacks.
   const validSkippedStacks = validateSkippedStacks(SKIPPED_STACK, skippedStacks)
 
   // Read `package.json` JSON asynchronously.
   const data = await read<Package>(TARGET_FILE, {
-    skippedStacks: validSkippedStacks
+    skippedStacks: validSkippedStacks,
+    stackTraceLimit
   })
 
   // Return `package.json` JSON value.
