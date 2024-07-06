@@ -106,15 +106,22 @@ readPackage()
   });
 ```
 
-# Types
-```typescript
-import type {
-  Package, // @mnrendra/types-package
-  Options
+## Utility
+```javascript
+import {
+  validateSkippedStacks // To validate the list of stacks to be skipped. More info: @mnrendra/validate-skipped-stacks
 } from '@mnrendra/read-package'
 ```
-### • [Package](https://www.npmjs.com/package/@mnrendra/types-package)
-### • [Options](https://github.com/mnrendra/read-package/blob/main/src/types/Options.ts)
+
+## Types
+```typescript
+import type {
+  Package, // Exported from @mnrendra/types-package.
+  Options, // @mnrendra/read-package options.
+  SkippedStacks, // @mnrendra/validate-skipped-stacks input.
+  ValidSkippedStacks // @mnrendra/validate-skipped-stacks output.
+} from '@mnrendra/read-package'
+```
 
 ## License
 [MIT](https://github.com/mnrendra/read-package/blob/HEAD/LICENSE)
