@@ -1,17 +1,13 @@
-import type { Package } from '@mnrendra/types-package'
+import type { Options, Package } from '../types'
 
-import type { Options } from '../types'
-
-import validateSkippedStacks from '@mnrendra/validate-skipped-stacks'
+import { readSync, validateSkippedStacks } from '@mnrendra/read-stacked-json'
 
 import { SKIPPED_STACK, TARGET_FILE } from '../consts'
-
-import { readSync } from '@mnrendra/read-stacked-json'
 
 /**
  * Read `package.json` file synchronously.
  *
- * @param {Object} [options] - Optional params.
+ * @param {Options} [options] - Optional params.
  *
  * @returns {Package} `package.json` JSON value.
  */
