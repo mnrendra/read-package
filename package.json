@@ -1,6 +1,6 @@
 {
   "name": "@mnrendra/read-package",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Read the package.json file from any sub-directory in your project.",
   "private": false,
   "main": "dist/index.js",
