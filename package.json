@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/mnrendra/read-package#readme",
   "dependencies": {
-    "@mnrendra/read-stacked-json": "^1.3.0",
+    "@mnrendra/read-stacked-json": "^1.5.0",
     "@mnrendra/types-package": "^1.0.0"
   },
   "devDependencies": {

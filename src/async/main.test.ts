@@ -12,7 +12,8 @@ jest.mock('@mnrendra/stack-trace', () => ({
 }))
 
 jest.mock('@mnrendra/read-stacked-file', () => ({
-  read: jest.fn()
+  read: jest.fn(),
+  validateSkippedStacks: jest.fn()
 }))
 
 describe('Test `main` async:', () => {
@@ -32,7 +33,7 @@ describe('Test `main` async:', () => {
 
     it('Should reject with an error when unable to locate the initial path!', async () => {
       const received = main()
-      const expected = Error(`Unable to locate the initial path of "${TARGET_FILE}".`)
+      const expected = Error(`Unable to locate the initial path of "${TARGET_FILE}.json".`)
 
       await expect(received).rejects.toThrow(expected)
     })
@@ -68,7 +69,7 @@ describe('Test `main` async:', () => {
 
     it('Should reject with an error when unable to parse the file!', async () => {
       const received = main()
-      const expected = Error(`"${TARGET_FILE}" value cannot be parsed.`)
+      const expected = Error(`"${TARGET_FILE}.json" value cannot be parsed.`)
 
       await expect(received).rejects.toThrow(expected)
     })

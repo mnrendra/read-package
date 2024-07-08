@@ -19,7 +19,8 @@ jest.mock('@mnrendra/stack-trace', () => ({
 
 jest.mock('@mnrendra/read-stacked-file', () => ({
   read: jest.fn(),
-  readSync: jest.fn()
+  readSync: jest.fn(),
+  validateSkippedStacks: jest.fn()
 }))
 
 describe('Test all features:', () => {
@@ -40,7 +41,7 @@ describe('Test all features:', () => {
 
       it('Should reject with an error when unable to locate the initial path!', async () => {
         const received = readPackage()
-        const expected = Error(`Unable to locate the initial path of "${TARGET_FILE}".`)
+        const expected = Error(`Unable to locate the initial path of "${TARGET_FILE}.json".`)
 
         await expect(received).rejects.toThrow(expected)
       })
@@ -76,7 +77,7 @@ describe('Test all features:', () => {
 
       it('Should reject with an error when unable to parse the file!', async () => {
         const received = readPackage()
-        const expected = Error(`"${TARGET_FILE}" value cannot be parsed.`)
+        const expected = Error(`"${TARGET_FILE}.json" value cannot be parsed.`)
 
         await expect(received).rejects.toThrow(expected)
       })
@@ -123,7 +124,7 @@ describe('Test all features:', () => {
 
       it('Should throw an error when unable to locate the initial path!', () => {
         const received = (): void => { readPackageSync() }
-        const expected = Error(`Unable to locate the initial path of "${TARGET_FILE}".`)
+        const expected = Error(`Unable to locate the initial path of "${TARGET_FILE}.json".`)
 
         expect(received).toThrow(expected)
       })
@@ -159,7 +160,7 @@ describe('Test all features:', () => {
 
       it('Should throw an error when unable to parse the file!', () => {
         const received = (): void => { readPackageSync() }
-        const expected = Error(`"${TARGET_FILE}" value cannot be parsed.`)
+        const expected = Error(`"${TARGET_FILE}.json" value cannot be parsed.`)
 
         expect(received).toThrow(expected)
       })
