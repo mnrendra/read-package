@@ -1,15 +1,19 @@
-import type { Options, Package } from '../types'
+import type { Package } from '@mnrendra/types-package'
+
+import type { Options } from '../types'
 
 import { read, validateSkippedStacks } from '@mnrendra/read-stacked-json'
 
 import { SKIPPED_STACK, TARGET_FILE } from '../consts'
 
 /**
- * Read `package.json` file asynchronously.
+ * Read the `package.json` file asynchronously.
  *
  * @param {Options} [options] - Optional params.
  *
  * @returns {Promise<Package>} `package.json` JSON value.
+ *
+ * @see https://github.com/mnrendra/read-package#readme
  */
 const main = async ({
   skippedStacks,
@@ -31,5 +35,4 @@ const main = async ({
   return data
 }
 
-// Export the `main` as the default value.
 export default main

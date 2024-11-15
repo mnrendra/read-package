@@ -1,24 +1,27 @@
-import type { SkippedStacks } from '.'
+import type { SkippedStacks } from '@mnrendra/read-stacked-json'
 
+/**
+ * The options interface.
+ *
+ * @see https://github.com/mnrendra/read-package#readme
+ */
 interface Options {
   /**
-   * To skip a stack or a list of stacks when you call `@mnrendra/stack-trace`
-   * or `@mnrendra/read-stacked-file`. So, you can get the stack(s) of your
-   * consumer target file.
+   * A name or a list of names of stack traces that need to be skipped.
    *
    * @default []
    *
-   * @see https://github.com/mnrendra/validate-skipped-stacks
+   * @see https://github.com/mnrendra/read-package#readme
    */
   skippedStacks?: SkippedStacks
 
   /**
-   * `@mnrendra/stack-trace`'s limit specifies the number of stack frames to be
-   * collected by a stack trace.
+   * The `Error.stackTraceLimit` property specifies the number of stack frames
+   * to be collected by a stack trace.
    *
    * @default 10
    *
-   * @see https://github.com/mnrendra/stack-trace
+   * @see https://github.com/mnrendra/read-package#readme
    */
   stackTraceLimit?: number
 }
